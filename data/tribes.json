@@ -1,0 +1,146 @@
+{
+  "Tribe" : {
+    "General" : {
+      "Biomes-prosperity-per-activity" : {
+        "Gathering-hunting": {
+          "boreal desert": 0.8,
+          "boreal dry scrub": 0.8,
+          "boreal moist forest": 0.8,
+          "boreal rain forest": 0.8,
+          "boreal wet forest": 0.8,
+          "cool temperate desert": 0.8,
+          "cool temperate desert scrub": 0.8,
+          "cool temperate moist forest": 0.8,
+          "cool temperate rain forest": 0.8,
+          "cool temperate steppe": 0.8,
+          "cool temperate wet forest": 0.8,
+          "ice": 0.8,
+          "ocean": 0.8,
+          "polar desert": 0.8,
+          "sea": 0.8,
+          "subpolar dry tundra": 0.8,
+          "subpolar moist tundra": 0.8,
+          "subpolar rain tundra": 0.8,
+          "subpolar wet tundra": 0.8,
+          "subtropical desert": 0.8,
+          "subtropical desert scrub": 0.8,
+          "subtropical dry forest": 0.8,
+          "subtropical moist forest": 0.8,
+          "subtropical rain forest": 0.8,
+          "subtropical thorn woodland": 0.8,
+          "subtropical wet forest": 0.8,
+          "tropical desert": 0.8,
+          "tropical desert scrub": 0.8,
+          "tropical dry forest": 0.8,
+          "tropical moist forest": 0.8,
+          "tropical rain forest": 0.8,
+          "tropical thorn woodland": 0.8,
+          "tropical very dry forest": 0.8,
+          "tropical wet forest": 0.8,
+          "warm temperate desert": 0.8,
+          "warm temperate desert scrub": 0.8,
+          "warm temperate dry forest": 0.8,
+          "warm temperate moist forest": 0.8,
+          "warm temperate rain forest": 0.8,
+          "warm temperate thorn scrub": 0.8,
+          "warm temperate wet forest": 0.8
+        },
+        "Agriculture": {
+          "boreal desert": 0.8,
+          "boreal dry scrub": 0.8,
+          "boreal moist forest": 0.8,
+          "boreal rain forest": 0.8,
+          "boreal wet forest": 0.8,
+          "cool temperate desert": 0.8,
+          "cool temperate desert scrub": 0.8,
+          "cool temperate moist forest": 0.8,
+          "cool temperate rain forest": 0.8,
+          "cool temperate steppe": 0.8,
+          "cool temperate wet forest": 0.8,
+          "ice": 0.8,
+          "ocean": 0.8,
+          "polar desert": 0.8,
+          "sea": 0.8,
+          "subpolar dry tundra": 0.8,
+          "subpolar moist tundra": 0.8,
+          "subpolar rain tundra": 0.8,
+          "subpolar wet tundra": 0.8,
+          "subtropical desert": 0.8,
+          "subtropical desert scrub": 0.8,
+          "subtropical dry forest": 0.8,
+          "subtropical moist forest": 0.8,
+          "subtropical rain forest": 0.8,
+          "subtropical thorn woodland": 0.8,
+          "subtropical wet forest": 0.8,
+          "tropical desert": 0.8,
+          "tropical desert scrub": 0.8,
+          "tropical dry forest": 0.8,
+          "tropical moist forest": 0.8,
+          "tropical rain forest": 0.8,
+          "tropical thorn woodland": 0.8,
+          "tropical very dry forest": 0.8,
+          "tropical wet forest": 0.8,
+          "warm temperate desert": 0.8,
+          "warm temperate desert scrub": 0.8,
+          "warm temperate dry forest": 0.8,
+          "warm temperate moist forest": 0.8,
+          "warm temperate rain forest": 0.8,
+          "warm temperate thorn scrub": 0.8,
+          "warm temperate wet forest": 0.8
+        }
+      },
+      "Unhospital-biomes" : [
+       "ocean", "ice"
+      ],
+      "Max-initial-population" : {
+        "children" : 15,
+        "young-men" : 15,
+        "young-women" : 15,
+        "old-men" : 5,
+        "old-women" : 5
+      },
+      "Start-activities" : [
+        "Gathering-hunting"
+      ],
+      "Max-population-for-activity" : {
+        "Gathering-hunting" : 200,
+        "Agriculture" : 1000
+      },
+      "Crowding-for-activity" : {
+        "Gathering-hunting" : 3.5,
+        "Agriculture" : 6.5
+      },
+      "Mortality-rates" : {
+        "children" : 0.35,
+        "young-men" : 0.22,
+        "young-women" : 0.22,
+        "old-men" : 1.1,
+        "old-women" : 1.1
+      },
+      "Grown-rates" : {
+        "men-women" : 0.5,
+        "old-men" : 0.25,
+        "old-women" : 0.25,
+        "women-fertility" : 1.1
+      }
+    },
+    "Tribes": [
+      {
+        "Name": "Tribe1",
+        "Max-initial-population" : {
+          "children" : 50,
+          "young-men" : 15,
+          "young-women" : 15,
+          "old-men" : 5,
+          "old-women" : 15
+        },
+        "Start-activities" : [
+          "Gathering-hunting"
+        ],
+        "Crowding-for-activity" : {
+          "Gathering-hunting" : 3.5
+        }
+      }
+    ]
+  }
+}
