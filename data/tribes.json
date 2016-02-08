@@ -122,24 +122,32 @@
         "old-men" : 0.25,
         "old-women" : 0.25,
         "women-fertility" : 1.1
+      },
+      "Events" : [
+        "Events.become_semi_sedentary",
+        "Events.discover_agriculture",
+        "Events.become_sedentary",
+        "Events.migrate"
+      ],
+      "Migration-radius" : {
+        "nomadic" : 2,
+        "semi-sedentary" : 2,
+        "sedentary" : 4
       }
     },
     "Tribes": [
       {
         "Name": "Tribe1",
         "Max-initial-population" : {
-          "children" : 50,
+          "children" : 15,
           "young-men" : 15,
           "young-women" : 15,
           "old-men" : 5,
-          "old-women" : 15
+          "old-women" : 5
         },
         "Start-activities" : [
           "Gathering-hunting"
-        ],
-        "Crowding-for-activity" : {
-          "Gathering-hunting" : 3.5
-        }
+        ]
       }
     ]
   }

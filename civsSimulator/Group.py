@@ -1,5 +1,5 @@
 import random
-from civsSimulator import Utils
+from civsSimulator import Utils, Events
 
 
 class Group:
@@ -15,23 +15,45 @@ class Group:
         self._young_women = random.randrange(0, mix_tribe["Max-initial-population"]["young-women"])
         self._old_men = random.randrange(0, mix_tribe["Max-initial-population"]["old-men"])
         self._old_women = random.randrange(0, mix_tribe["Max-initial-population"]["old-women"])
-        self._activities = mix_tribe["Start-activities"]
+        self.activities = mix_tribe["Start-activities"]
         self._max_populations = mix_tribe["Max-population-for-activity"]
         self._biomes_prosperity_per_activity = mix_tribe["Biomes-prosperity-per-activity"]
         self._crowding_per_activity = mix_tribe["Crowding-for-activity"]
         self._mortality = mix_tribe["Mortality-rates"]
         self._grown_rates = mix_tribe["Grown-rates"]
+        self._last_prosperity = 0
+        self.nomadism = "nomadic"
+        self._events = mix_tribe["Events"]
         self.print_population_info()
 
     def print_population_info(self):
-        print("Children: " + str(self._children) + " Young men: " + str(self._young_men) + " Young women: " + str(
-            self._young_women) + " old men: " + str(self._old_men) + " old women: " + str(self._old_women))
+        print("Total Population: " + str(self.total_persons) + " children: " + str(self._children) + " young men: " +
+              str(self._young_men) + " young women: " + str(self._young_women) + " old men: " + str(self._old_men) +
+              " old women: " + str(self._old_women) + "\nThe group has a " + self.nomadism + " culture")
+
+    @property
+    def is_dead(self):
+        return self.total_persons() == 0
+
+    @property
+    def prosperity(self):
+        return self._last_prosperity
+
+    @property
+    def position(self):
+        return self._position.x, self._position.y
 
     def turn(self, world):
         self._update_population(world)
+        self._check_events(world)
+
+    def _check_events(self, world):
+        for event in self._events:
+            eval(event)(self, world)
 
     def _update_population(self, world):
-        p = self._get_prosperity(world)
+        p = self.get_prosperity(world, self.position)
+        self._last_prosperity = p
         children_delta = self._update_children(p)
         young_delta = self._update_young(p)
         old_delta = self._update_old(p)
@@ -43,24 +65,23 @@ class Group:
         self._old_men += tot_delta[3]
         self._old_women += tot_delta[4]
 
-    def _get_prosperity(self, world):
-        return max(self._get_prosperity_per_activity(world))
+    def get_prosperity(self, world, position):
+        return max(self.get_prosperity_per_activity(world, position))
 
-    def _get_prosperity_per_activity(self, world):
+    def get_prosperity_per_activity(self, world, position):
         prosperity = []
-        for activity in self._activities:
-            base = self._get_base_prosperity_per_activity(activity, world)
+        for activity in self.activities:
+            base = self.get_base_prosperity_per_activity(activity, world, position)
             crowding = self._get_crowding_per_activity(activity)
             prosperity.append(Utils.saturate(base * crowding, 1.0))
         return prosperity
 
-    def _get_base_prosperity_per_activity(self, activity, world):
-        return self._biomes_prosperity_per_activity[activity][world.biome_at((self._position.x,
-                                                                              self._position.y)).name()]
+    def get_base_prosperity_per_activity(self, activity, world, position):
+        return self._biomes_prosperity_per_activity[activity][world.biome_at(position).name()]
 
     def _get_crowding_per_activity(self, activity):
-        actives = self.get_active_persons()
-        total = self.get_total_persons()
+        actives = self.active_persons
+        total = self.total_persons
         max_support = self._max_populations[activity]
         pop_support = actives * self._crowding_per_activity[activity]
         pop_support = min(max_support, pop_support)
@@ -72,10 +93,12 @@ class Group:
             else:
                 return 1.0 / (total / pop_support)
 
-    def get_active_persons(self):
+    @property
+    def active_persons(self):
         return self._young_men + self._young_women
 
-    def get_total_persons(self):
+    @property
+    def total_persons(self):
         return self._old_men + self._old_women + self._young_men + self._young_women + self._children
 
     def _update_children(self, prosp):
@@ -83,7 +106,7 @@ class Group:
         n_children = self._children
         [dead, grown] = Utils.rsplit(n_children, mortality)
         [men, women] = Utils.rsplit(grown, self._grown_rates["men-women"])
-        print("Dead children: " + str(dead))
+        # print("Dead children: " + str(dead))
         return [-dead, men, women, 0, 0]
 
     def _update_young(self, prosp):
@@ -95,7 +118,7 @@ class Group:
         [w_dead, w_alive] = Utils.rsplit(n_young_women, mortality_women)
         [m_grown, m_rest] = Utils.rsplit(m_alive, self._grown_rates["old-men"])
         [w_grown, w_rest] = Utils.rsplit(w_alive, self._grown_rates["old-women"])
-        print("Dead young men: " + str(m_dead) + " dead young women: " + str(w_dead))
+        # print("Dead young men: " + str(m_dead) + " dead young women: " + str(w_dead))
         return [0, -1 * (m_dead + m_grown), -1 * (w_dead + w_grown), m_grown, w_grown]
 
     def _update_old(self, prosp):
@@ -105,7 +128,7 @@ class Group:
         n_old_women = self._old_women
         [m_dead, m_alive] = Utils.rsplit(n_old_men, mortality_men)
         [w_dead, w_alive] = Utils.rsplit(n_old_women, mortality_women)
-        print("Dead old men: " + str(m_dead) + " dead old women: " + str(w_dead))
+        # print("Dead old men: " + str(m_dead) + " dead old women: " + str(w_dead))
         return [0, 0, 0, -m_dead, -w_dead]
 
     def _update_births(self, prosp):
@@ -116,7 +139,8 @@ class Group:
         births = round(women_fertility * men_availability_factor)
         return [births, 0, 0, 0, 0]
 
-    def _get_men_availability_factor(self, young_men, young_women):
+    @staticmethod
+    def _get_men_availability_factor(young_men, young_women):
         if young_women > 0:
             men_factor = young_men / young_women
             res = (men_factor * 0.5) / 2
