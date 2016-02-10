@@ -143,7 +143,8 @@
     },
     "Tribes": [
       {
-        "Name": "Tribe1",
+        "Type": "Human",
+        "Name": "Human.get_name",
         "Max-initial-population" : {
           "children" : 15,
           "young-men" : 15,
@@ -153,7 +154,22 @@
         },
         "Start-activities" : [
           "Gathering-hunting"
-        ]
+        ],
+        "Name-rules": {
+          "vowels" : ["a", "e", "i", "o", "u"],
+          "consonants" : ["b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r",
+            "s", "t", "v", "w", "x", "y"],
+          "syllables" : ["-Ael", "-Aer", "-af", "-ah", "-am", "-ama", "-an", "-ang +v",
+            "-ansr +v", "-cael", "-dae +c", "-dho", "-eir", "-fi", "-fir", "-la", "-seh",
+            "-sel", "-ev", "-fis", "-hu", "-ha", "-gar", "-gil", "-ka", "-kan", "-ya", "-za",
+            "-zy", "-mara", "-mai +c", "-lue +c", "-ny", "-she", "-sum", "-syl", "ae +c -c",
+            "ael -c", "dar", "deth +v", "dre -v", "drim -v", "dul", "ean -c", "el", "emar", "hal",
+            "iat -c", "mah", "ten", "que -v +c", "ria", "rail", "ther", "thus", "thi", "san",
+            "+ael -c", "+dar", "+deth", "+dre", "+drim", "+dul", "+ean -c", "+el", "+emar", "+nes",
+            "+nin", "+oth", "+hal", "+iat", "+mah", "+ten", "+ther", "+thus", "+thi", "+ran",
+            "+ath", "+ess", "+san", "+yth", "+las", "+lian", "+evar"],
+          "max-syllables" : 4
+        }
       }
     ]
   }

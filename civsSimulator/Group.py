@@ -1,6 +1,7 @@
 import random
 import copy
 from civsSimulator import Utils, Events
+from civsSimulator.Tribes import *
 
 
 class Group:
@@ -51,7 +52,7 @@ class Group:
         def_tribe = copy.deepcopy(default)
         mix_tribe = Utils.update(mix_tribe, def_tribe)
         self._tribe = mix_tribe
-        self._name = mix_tribe["Name"]
+        self._name = eval(mix_tribe["Name"])(mix_tribe["Name-rules"])
         self._children = random.randrange(0, mix_tribe["Max-initial-population"]["children"])
         self._young_men = random.randrange(0, mix_tribe["Max-initial-population"]["young-men"])
         self._young_women = random.randrange(0, mix_tribe["Max-initial-population"]["young-women"])
