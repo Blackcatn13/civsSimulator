@@ -2,7 +2,10 @@ import random
 from civsSimulator import Utils
 import math
 import itertools
-import operator
+
+# ================================================
+# ====     Helper functions for the events    ====
+# ================================================
 
 
 def discovery_population_factor(total, required):
@@ -65,27 +68,66 @@ def chance_to_migrate(group, world, occupied_positions):
     else:
         return (1 - group.prosperity) * group.migration_rate
 
+# =======================
+# ====     Events    ====
+# =======================
 
-# Events
+
 def become_semi_sedentary(group, world, information):
+    """
+    This event checks if a group can evolve to semi sedentary.
+
+    If the event occurs a fact is added to the group.
+
+    :param group: The group to check.
+    :param world: The world.
+    :param information: A dictionary with the information for the events.
+    """
     if random.random() < chance_to_become_semi_sedentary(group):
         group.facts.append("Group is converting to semi-sedentarism in turn: {}".format(information["turn"]))
         group.nomadism = "semi-sedentary"
 
 
 def discover_agriculture(group, world, information):
+    """
+    This event checks if a group discovers agriculture.
+
+    If the event occurs a fact is added to the group.
+
+    :param group: The group to check.
+    :param world: The world.
+    :param information: A dictionary with the information for the events.
+    """
     if random.random() < chance_to_discover_agriculture(group, world):
         group.facts.append("Group has discovered agriculture in turn: {}".format(information["turn"]))
         group.activities.append("Agriculture")
 
 
 def become_sedentary(group, world, information):
+    """
+    This event checks if a group can evolve to sedentary.
+
+    If the event occurs a fact is added to the group.
+
+    :param group: The group to check.
+    :param world: The world.
+    :param information: A dictionary with the information for the events.
+    """
     if random.random() < chance_to_become_sedentary(group):
         group.facts.append("Group is converting to sedentarism in turn: {}".format(information["turn"]))
         group.nomadism = "sedentary"
 
 
 def migrate(group, world, information):
+    """
+    This event checks if a group migrates from it's current position.
+
+    If the event occurs a fact is added to the group.
+
+    :param group: The group to check.
+    :param world: The world.
+    :param information: A dictionary with the information for the events.
+    """
     if random.random() < chance_to_migrate(group, world, information["occupied_positions"]):
         positions = land_cells_around(world, group.position, group.migration_radius, information["occupied_positions"])
         prosperity = ([Utils.perturbate_low(group.get_prosperity(world, p)), p] for p in positions)
@@ -95,6 +137,15 @@ def migrate(group, world, information):
 
 
 def dead(group, world, information):
+    """
+    This event checks if a group is dead.
+
+    If the event occurs a fact is added to the group.
+
+    :param group: The group to check.
+    :param world: The world.
+    :param information: A dictionary with the information for the events.
+    """
     if group.is_dead:
         group.facts.append("Group has dead in turn: {}".format(information["turn"]))
 
