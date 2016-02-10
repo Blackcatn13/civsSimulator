@@ -1,12 +1,14 @@
 import random
+import copy
 from civsSimulator import Utils, Events
 
 
 class Group:
     def __init__(self, position, tribe, default):
         self._position = position
-        mix_tribe = tribe.copy()
-        mix_tribe = Utils.update(mix_tribe, default)
+        mix_tribe = copy.deepcopy(tribe)
+        def_tribe = copy.deepcopy(default)
+        mix_tribe = Utils.update(mix_tribe, def_tribe)
         self._tribe = mix_tribe
         self._name = mix_tribe["Name"]
         self._children = random.randrange(0, mix_tribe["Max-initial-population"]["children"])
