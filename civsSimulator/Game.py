@@ -12,6 +12,7 @@ class Game:
         self._config = {}
         self.load_config(config)
         self._world = World.open_protobuf(world)
+        self._turn = 0
 
     def load_config(self, config):
         with open(config) as data_file:
@@ -31,6 +32,8 @@ class Game:
         self._groups.append(t)
 
     def turn(self):
+        self._turn += 1
         occupied_positions = [g.position for g in self._groups]
+        information = {"occupied_positions": occupied_positions, "turn": self._turn}
         for group in self._groups:
-            group.turn(self._world, occupied_positions)
+            group.turn(self._world, information)

@@ -67,34 +67,34 @@ def chance_to_migrate(group, world, occupied_positions):
 
 
 # Events
-def become_semi_sedentary(group, world, occupied_positions):
+def become_semi_sedentary(group, world, information):
     if random.random() < chance_to_become_semi_sedentary(group):
-        group.facts.append("Group is converting to semi-sedentarism")
+        group.facts.append("Group is converting to semi-sedentarism in turn: {}".format(information["turn"]))
         group.nomadism = "semi-sedentary"
 
 
-def discover_agriculture(group, world, occupied_positions):
+def discover_agriculture(group, world, information):
     if random.random() < chance_to_discover_agriculture(group, world):
-        group.facts.append("Group has discovered agriculture!")
+        group.facts.append("Group has discovered agriculture in turn: {}".format(information["turn"]))
         group.activities.append("Agriculture")
 
 
-def become_sedentary(group, world, occupied_positions):
+def become_sedentary(group, world, information):
     if random.random() < chance_to_become_sedentary(group):
-        group.facts.append("Group is converting to sedentarism")
+        group.facts.append("Group is converting to sedentarism in turn: {}".format(information["turn"]))
         group.nomadism = "sedentary"
 
 
-def migrate(group, world, occupied_positions):
-    if random.random() < chance_to_migrate(group, world, occupied_positions):
-        positions = land_cells_around(world, group.position, group.migration_radius, occupied_positions)
+def migrate(group, world, information):
+    if random.random() < chance_to_migrate(group, world, information["occupied_positions"]):
+        positions = land_cells_around(world, group.position, group.migration_radius, information["occupied_positions"])
         prosperity = ([Utils.perturbate_low(group.get_prosperity(world, p)), p] for p in positions)
         best = max(prosperity)
-        group.facts.append("Group is moving to better lands")
+        group.facts.append("Group is moving to better lands {} in turn: {}".format(best[1], information["turn"]))
         group.position = best[1]
 
 
-def dead(group, world, occupied_positions):
+def dead(group, world, information):
     if group.is_dead:
-        group.facts.append("Group has dead")
+        group.facts.append("Group has dead in turn: {}".format(information["turn"]))
 

@@ -65,14 +65,14 @@ class Group:
     def total_persons(self):
         return self._old_men + self._old_women + self._young_men + self._young_women + self._children
 
-    def turn(self, world, occupied_positions):
+    def turn(self, world, information):
         if not self.is_dead:
             self._update_population(world)
-            self._check_events(world, occupied_positions)
+            self._check_events(world, information)
 
-    def _check_events(self, world, occupied_positions):
+    def _check_events(self, world, information):
         for event in self._events:
-            eval(event)(self, world, occupied_positions)
+            eval(event)(self, world, information)
 
     def _update_population(self, world):
         p = self.get_prosperity(world, self.position)
