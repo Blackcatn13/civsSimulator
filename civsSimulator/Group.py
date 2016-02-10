@@ -4,7 +4,48 @@ from civsSimulator import Utils, Events
 
 
 class Group:
+    """This class represents a group.
+
+    The group will evolve using the :func:`turn`.
+
+    :param position: The position to set the group.
+    :param tribe: A dictionary containing all the custom parameters for the group.
+    :param default: A dictionary containing all the default parameters for all the groups.
+
+    The tribe parameters will be merged with the default ones.
+
+    The current available parameters are:
+        * **Biomes-prosperity-per-activity**: this entry holds the prosperity factor of every biome that defines the
+          WorldEngine. This values are replicated for each activity defined in the simulation.
+        * **Unhospital-biomes**: this are the biomes that will be skipped when searching for a valid position in the
+          map to place the tribe.
+        * **Max-initial-population**: this are the maximum values that a new created tribe can have of every type of
+          person.
+        * **Start-activities**: this are the starting activities that every tribe will have.
+        * **Max-population-for-activity**: this defines the maximum population a tribe can have with his developed
+          activities.
+        * **Crowding-for-activity**: this defines how more people can the tribe support with the current activity.
+        * **Mortality-rates**: this defines the different mortality rates for the different types of person.
+        * **Grown-rates**: this defines the values to grown the people, the **men-women** is the relation of a child
+          growing men or women (1.0 all men, 0.0 all women), the **old-men** and **old-women** are the probability of
+          a young to grown old.
+        * **Events**: this is a list of all the events a tribe will check every turn. The values are the function names
+          of the events in the Events module. They are executed with the **group** and **world** as parameters.
+        * **Migration-radius**: this is the radius a tribe will check for a better position if the event migrate
+          triggers.
+        * **Migration-rate**: this is a list with the probability of migrate depending the current tribe culture.
+
+    """
     def __init__(self, position, tribe, default):
+        """
+        This will create a group in the given position, and with the given parameters.
+
+        The tribe parameters will be merged with the default ones.
+
+        :param position: The position to set the group.
+        :param tribe: A dictionary containing all the custom parameters for the group.
+        :param default: A dictionary containing all the default parameters for all the groups.
+        """
         self._position = position
         mix_tribe = copy.deepcopy(tribe)
         def_tribe = copy.deepcopy(default)
@@ -30,6 +71,9 @@ class Group:
         self.facts = []
 
     def print_population_info(self):
+        """
+        Prints the population information of the group.
+        """
         print("Total Population: " + str(self.total_persons) + "\n\tChildren: " + str(self._children) +
               "\n\tYoung men: " + str(self._young_men) + "\n\tYoung women: " + str(self._young_women) +
               "\n\tOld men: " + str(self._old_men) + "\n\tOld women: " + str(self._old_women) +
@@ -37,46 +81,88 @@ class Group:
 
     @property
     def is_dead(self):
+        """
+        The group status.
+        """
         return self.total_persons == 0
 
     @property
     def prosperity(self):
+        """
+        The last calculate prosperity for the group.
+        """
         return self._last_prosperity
 
     @property
     def position(self):
+        """
+        The current position of the group.
+        """
         return self._position.x, self._position.y
 
     @position.setter
     def position(self, value):
+        """
+        Sets a new position value.
+        """
         self._position = Utils.Position._make(value)
 
     @property
     def migration_radius(self):
+        """
+        The current migration radius taking into account the current culture.
+        """
         return self._migration_radius[self.nomadism]
 
     @property
     def migration_rate(self):
+        """
+        The current migration rate taking into account the current culture.
+        """
         return self._migration_rate[self.nomadism]
 
     @property
     def active_persons(self):
+        """
+        The current active persons of the group.
+        """
         return self._young_men + self._young_women
 
     @property
     def total_persons(self):
+        """
+        The current total population of the group.
+        """
         return self._old_men + self._old_women + self._young_men + self._young_women + self._children
 
     def turn(self, world, information):
+        """
+        This function simulates a turn of the group.
+
+        A turn consist of updating the population, and checking the events.
+
+        :param world: The world in which the group lives.
+        :param information: A dictionary with the information to give to the events.
+        """
         if not self.is_dead:
             self._update_population(world)
             self._check_events(world, information)
 
     def _check_events(self, world, information):
+        """
+        This function calls all the events that the group has.
+
+        :param world: The world in which the group lives.
+        :param information: A dictionary with the information to give to the events.
+        """
         for event in self._events:
             eval(event)(self, world, information)
 
     def _update_population(self, world):
+        """
+        This functions updates the population of the group.
+        :param world: The world in which the group lives.
+        """
         p = self.get_prosperity(world, self.position)
         self._last_prosperity = p
         children_delta = self._update_children(p)
@@ -91,9 +177,24 @@ class Group:
         self._old_women += tot_delta[4]
 
     def get_prosperity(self, world, position):
+        """
+        This function returns the prosperity of the group in the given position.
+
+        It returns the best value given all the current activities of the group.
+
+        :param world: The world in which the group lives.
+        :param position: The position to check.
+        :return: The prosperity value in the given position.
+        """
         return max(self.get_prosperity_per_activity(world, position))
 
     def get_prosperity_per_activity(self, world, position):
+        """
+        This function returns the prosperity of each activity of group in the given position.
+        :param world: The world in which the group lives.
+        :param position: The position to check.
+        :return: A list with the prosperity for each activity of the group.
+        """
         prosperity = []
         for activity in self.activities:
             base = self.get_base_prosperity_per_activity(activity, world, position)
@@ -102,6 +203,13 @@ class Group:
         return prosperity
 
     def get_base_prosperity_per_activity(self, activity, world, position):
+        """
+        This functions returns the prosperity of an activity given a position.
+        :param activity: The activity to get the prosperity.
+        :param world: The world in which the group lives.
+        :param position: The position to check.
+        :return: The prosperity in that position with the given activity.
+        """
         return self._biomes_prosperity_per_activity[activity][world.biome_at(position).name()]
 
     def _get_crowding_per_activity(self, activity):
