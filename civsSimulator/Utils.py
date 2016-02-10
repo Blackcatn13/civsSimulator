@@ -1,5 +1,9 @@
 import random
 import collections
+from collections import namedtuple
+
+
+Position = namedtuple('Position', ['x', 'y'])
 
 
 def saturate(value, sat_max):
@@ -48,3 +52,7 @@ def perturbate_med(n):
 
 def perturbate_low(n):
     return perturbate(n, 0.2)
+
+
+def add_list(l1, l2):
+    return tuple([i1 + i2 for i1, i2 in zip(l1, l2)])

@@ -1,10 +1,8 @@
 import json
 import random
 from worldengine.world import World
-from collections import namedtuple
 from civsSimulator.Group import Group
-
-Position = namedtuple('Position', ['x', 'y'])
+from civsSimulator import Utils
 
 
 class Game:
@@ -26,12 +24,13 @@ class Game:
         else:
             unhosp_biomes = self._config["Tribe"]["General"]["Unhospital-biomes"]
 
-        p = Position(random.randrange(0, self._world.width), random.randrange(0, self._world.height))
+        p = Utils.Position(random.randrange(0, self._world.width), random.randrange(0, self._world.height))
         while self._world.biome_at((p.x, p.y)).name() in unhosp_biomes:
-            p = Position(random.randrange(0, self._world.width), random.randrange(0, self._world.height))
+            p = Utils.Position(random.randrange(0, self._world.width), random.randrange(0, self._world.height))
         t = Group(p, tribe_info, self._config["Tribe"]["General"])
         self._groups.append(t)
 
     def turn(self):
+        occupied_positions = [g.position for g in self._groups]
         for group in self._groups:
-            group.turn(self._world)
+            group.turn(self._world, occupied_positions)

@@ -3,7 +3,6 @@ from civsSimulator import Utils, Events
 
 
 class Group:
-
     def __init__(self, position, tribe, default):
         self._position = position
         mix_tribe = tribe.copy()
@@ -24,12 +23,15 @@ class Group:
         self._last_prosperity = 0
         self.nomadism = "nomadic"
         self._events = mix_tribe["Events"]
-        self.print_population_info()
+        self._migration_radius = mix_tribe["Migration-radius"]
+        self._migration_rate = mix_tribe["Migration-rate"]
+        self.facts = []
 
     def print_population_info(self):
-        print("Total Population: " + str(self.total_persons) + " children: " + str(self._children) + " young men: " +
-              str(self._young_men) + " young women: " + str(self._young_women) + " old men: " + str(self._old_men) +
-              " old women: " + str(self._old_women) + "\nThe group has a " + self.nomadism + " culture")
+        print("Total Population: " + str(self.total_persons) + "\n\tChildren: " + str(self._children) +
+              "\n\tYoung men: " + str(self._young_men) + "\n\tYoung women: " + str(self._young_women) +
+              "\n\tOld men: " + str(self._old_men) + "\n\tOld women: " + str(self._old_women) +
+              "\nThe group has a " + self.nomadism + " culture" + "\nThe group lives in: %s" % (self.position,))
 
     @property
     def is_dead(self):
@@ -43,13 +45,25 @@ class Group:
     def position(self):
         return self._position.x, self._position.y
 
-    def turn(self, world):
-        self._update_population(world)
-        self._check_events(world)
+    @position.setter
+    def position(self, value):
+        self._position = Utils.Position._make(value)
 
-    def _check_events(self, world):
+    @property
+    def migration_radius(self):
+        return self._migration_radius[self.nomadism]
+
+    @property
+    def migration_rate(self):
+        return self._migration_rate[self.nomadism]
+
+    def turn(self, world, occupied_positions):
+        self._update_population(world)
+        self._check_events(world, occupied_positions)
+
+    def _check_events(self, world, occupied_positions):
         for event in self._events:
-            eval(event)(self, world)
+            eval(event)(self, world, occupied_positions)
 
     def _update_population(self, world):
         p = self.get_prosperity(world, self.position)
