@@ -93,3 +93,8 @@ def migrate(group, world, occupied_positions):
         group.facts.append("Group is moving to better lands")
         group.position = best[1]
 
+
+def dead(group, world, occupied_positions):
+    if group.is_dead:
+        group.facts.append("Group has dead")
+

@@ -35,7 +35,7 @@ class Group:
 
     @property
     def is_dead(self):
-        return self.total_persons() == 0
+        return self.total_persons == 0
 
     @property
     def prosperity(self):
@@ -57,9 +57,18 @@ class Group:
     def migration_rate(self):
         return self._migration_rate[self.nomadism]
 
+    @property
+    def active_persons(self):
+        return self._young_men + self._young_women
+
+    @property
+    def total_persons(self):
+        return self._old_men + self._old_women + self._young_men + self._young_women + self._children
+
     def turn(self, world, occupied_positions):
-        self._update_population(world)
-        self._check_events(world, occupied_positions)
+        if not self.is_dead:
+            self._update_population(world)
+            self._check_events(world, occupied_positions)
 
     def _check_events(self, world, occupied_positions):
         for event in self._events:
@@ -106,14 +115,6 @@ class Group:
                 return 0.0
             else:
                 return 1.0 / (total / pop_support)
-
-    @property
-    def active_persons(self):
-        return self._young_men + self._young_women
-
-    @property
-    def total_persons(self):
-        return self._old_men + self._old_women + self._young_men + self._young_women + self._children
 
     def _update_children(self, prosp):
         mortality = self._mortality["children"] * Utils.opposite(prosp)

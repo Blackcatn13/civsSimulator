@@ -127,7 +127,8 @@
         "Events.become_semi_sedentary",
         "Events.discover_agriculture",
         "Events.become_sedentary",
-        "Events.migrate"
+        "Events.migrate",
+        "Events.dead"
       ],
       "Migration-radius" : {
         "nomadic" : 2,
