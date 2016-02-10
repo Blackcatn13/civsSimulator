@@ -5,44 +5,46 @@ class NameGenerator:
     """This class represents a name generator.
 
     This is a python conversion of the generator found in
-    <http://forum.codecall.net/topic/49665-java-random-name-generator/> all credits to the creator.
+    `<http://forum.codecall.net/topic/49665-java-random-name-generator/>`_ all credits to the creator.
 
     This class generates random names from syllables, and provides a simple way to set a group of rules for generating
     names.
 
-    Syllable Requirements/Format
-    ++++++++++++++++++++++++++++
-    1. All syllables are in a list
-    2. + and - characters are used to set rules, and using them in other way may result in unpredictable results.
+    **Syllable Requirements/Format**
 
-    Syllable Classification
-    +++++++++++++++++++++++
+    1. All syllables are in a list
+    2. "+" and "-" characters are used to set rules, and using them in other way may result in unpredictable results.
+
+    **Syllable Classification**
+
     A name is usually composed from 3 different class of syllables, which include prefix, middle part and suffix.
     To declare syllable as a prefix insert "-" as a first character of the word.
     To declare syllable as a suffix insert "+" as a first character of the word.
     Everything else is read as a middle part.
 
-    Number of Syllables
-    +++++++++++++++++++
+    **Number of Syllables**
+
     Names may have any positive number of syllables. In case of 2 syllables, name will be composed from a prefix and a
     suffix.
     In case of 1 syllable, the name will be chosen from amongst the prefixes.
     In case of 3 and more syllables, the name will begin with a prefix, will be filled with middle parts and ended with
     a suffix.
 
-    Assigning Rules
-    +++++++++++++++
+    **Assigning Rules**
+
     A set of 4 kind of rules is used for every syllable. To add rules to the syllables, write them right after the
     syllable and SEPARATE WITH WHITESPACE. (Example: "aad +v -c"). The order of the rules is not important.
 
-    RULES
-    +++++
+    **RULES**
+
     1. +v means that next syllable must definitely start with a vowel.
     2. +c means that next syllable must definitely start with a consonant.
     3. -v means that this syllable can only be added to another syllable that ends with a vowel.
     4. -c means that this syllable can only be added to another syllable that ends with a consonant.
+
     So, the example "aad +v -c" means that "aad" can only be after consonant and the next syllable must start with
     vowel.
+    
     Beware of creating logical mistakes, like providing only syllables ending with consonants, but expecting only
     vowels, which will be detected and AssertionError will be thrown.
     """
