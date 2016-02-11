@@ -44,7 +44,7 @@ class NameGenerator:
 
     So, the example "aad +v -c" means that "aad" can only be after consonant and the next syllable must start with
     vowel.
-    
+
     Beware of creating logical mistakes, like providing only syllables ending with consonants, but expecting only
     vowels, which will be detected and AssertionError will be thrown.
     """

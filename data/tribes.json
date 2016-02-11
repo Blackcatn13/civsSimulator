@@ -128,7 +128,8 @@
         "Events.discover_agriculture",
         "Events.become_sedentary",
         "Events.migrate",
-        "Events.dead"
+        "Events.dead",
+        "Events.develop_trade"
       ],
       "Migration-radius" : {
         "nomadic" : 2,
@@ -139,7 +140,9 @@
         "nomadic" : 0.85,
         "semi-sedentary" : 0.15,
         "sedentary" : 0
-      }
+      },
+      "Trade-base-radius": 3,
+      "Wealth-base-multiplier": 1
     },
     "Tribes": [
       {

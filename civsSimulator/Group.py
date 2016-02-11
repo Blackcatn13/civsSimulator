@@ -1,5 +1,6 @@
 import random
 import copy
+import math
 from civsSimulator import Utils, Events
 from civsSimulator.Tribes import *
 
@@ -53,6 +54,7 @@ class Group:
         mix_tribe = Utils.update(mix_tribe, def_tribe)
         self._tribe = mix_tribe
         self._name = eval(mix_tribe["Name"])(mix_tribe["Name-rules"])
+        self.type = mix_tribe["Type"]
         self._children = random.randrange(0, mix_tribe["Max-initial-population"]["children"])
         self._young_men = random.randrange(0, mix_tribe["Max-initial-population"]["young-men"])
         self._young_women = random.randrange(0, mix_tribe["Max-initial-population"]["young-women"])
@@ -70,6 +72,10 @@ class Group:
         self._migration_radius = mix_tribe["Migration-radius"]
         self._migration_rate = mix_tribe["Migration-rate"]
         self.facts = []
+        self._wealth = 0
+        self._wealth_base_multiplier = mix_tribe["Wealth-base-multiplier"]
+        self._trade_radius = mix_tribe["Trade-base-radius"]
+        self.knows_trade = False
 
     def print_population_info(self):
         """
@@ -136,6 +142,25 @@ class Group:
         """
         return self._old_men + self._old_women + self._young_men + self._young_women + self._children
 
+    @property
+    def wealth_multiplier(self):
+        """
+        This function returns the multiplier to apply taking into account the wealth value
+
+        The formula used to calculate the value is the following:
+
+        -7.5498*10^-10 * x^3 + 1.47482*10^-6 * x^2 + 0.000268934 * x + 0.998994
+
+        :return: The wealth multiplier.
+        """
+        return self._wealth_base_multiplier * (-7.5498 * math.pow(10, -10) * math.pow(self._wealth, 3) + 1.47482 *
+                                               math.pow(10, -6) * math.pow(self._wealth, 2) + 0.000268934 *
+                                               self._wealth + 0.998994)
+
+    @property
+    def trade_radius(self):
+        return self._trade_radius
+
     def turn(self, world, information):
         """
         This function simulates a turn of the group.
@@ -165,7 +190,7 @@ class Group:
         :param world: The world in which the group lives.
         """
         p = self.get_prosperity(world, self.position)
-        self._last_prosperity = p
+        self._last_prosperity = p * self.wealth_multiplier
         children_delta = self._update_children(p)
         young_delta = self._update_young(p)
         old_delta = self._update_old(p)

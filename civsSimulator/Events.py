@@ -9,6 +9,8 @@ import itertools
 
 
 def discovery_population_factor(total, required):
+    if total == 0:
+        return 0
     return math.log10(total / required) + 1
 
 
@@ -50,11 +52,17 @@ def is_land(world, pos):
 
 
 def land_cells_around(world, pos, radius, occupied_positions):
-    rad = range(-radius, radius+1)
+    rad = range(-radius, radius + 1)
     positions = itertools.product(rad, rad)
     filtered = (Utils.add_list(pos, p) for p in positions if inside_world(world, Utils.add_list(pos, p)))
     land = (p for p in filtered if is_land(world, p))
     return (p for p in land if p not in occupied_positions)
+
+
+def groups_around(pos, radius, occupied_positions):
+    rad = range(-radius, radius + 1)
+    positions = itertools.product(rad, rad)
+    return len([p for p in positions if Utils.add_list(pos, p) in occupied_positions])
 
 
 class _exhausted:
@@ -67,6 +75,21 @@ def chance_to_migrate(group, world, occupied_positions):
         return 0
     else:
         return (1 - group.prosperity) * group.migration_rate
+
+
+def change_to_develop_trade(group, occupied_positions):
+    if group.nomadism == "sedentary" and not group.knows_trade:
+        neighbours = groups_around(group.position, group.trade_radius, occupied_positions)
+        if neighbours > 0:
+            prosperity = group.prosperity
+            if prosperity > 0.8:
+                return Utils.saturate((prosperity - 0.78) / 1.3, 0.3)
+            else:
+                return 0.05
+        else:
+            return 0
+    else:
+        return 0
 
 # =======================
 # ====     Events    ====
@@ -148,4 +171,19 @@ def dead(group, world, information):
     """
     if group.is_dead:
         group.facts.append("Group has dead in turn: {}".format(information["turn"]))
+
+
+def develop_trade(group, world, information):
+    """
+    This event checks if a group can develop trade.
+
+    To develop trade a group must be sedentary and have any neighbour near to commerce with them.
+    :param group: The group to check.
+    :param world: The world.
+    :param information: A dictionary with the information for the events.
+    :return:
+    """
+    if random.random() < change_to_develop_trade(group, information["occupied_positions"]):
+        group.facts.append("Group has develop trade in turn {}".format(information["turn"]))
+        group.knows_trade = True
 
