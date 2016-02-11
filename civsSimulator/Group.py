@@ -53,7 +53,7 @@ class Group:
         def_tribe = copy.deepcopy(default)
         mix_tribe = Utils.update(mix_tribe, def_tribe)
         self._tribe = mix_tribe
-        self._name = eval(mix_tribe["Name"])(mix_tribe["Name-rules"])
+        self.name = eval(mix_tribe["Name"])(mix_tribe["Name-rules"])
         self.type = mix_tribe["Type"]
         self._children = random.randrange(0, mix_tribe["Max-initial-population"]["children"])
         self._young_men = random.randrange(0, mix_tribe["Max-initial-population"]["young-men"])
@@ -71,7 +71,7 @@ class Group:
         self._events = mix_tribe["Events"]
         self._migration_radius = mix_tribe["Migration-radius"]
         self._migration_rate = mix_tribe["Migration-rate"]
-        self.facts = []
+        self.facts = {}
         self._wealth = 0
         self._wealth_base_multiplier = mix_tribe["Wealth-base-multiplier"]
         self._trade_radius = mix_tribe["Trade-base-radius"]

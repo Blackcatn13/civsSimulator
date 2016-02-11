@@ -107,8 +107,12 @@ def become_semi_sedentary(group, world, information):
     :param information: A dictionary with the information for the events.
     """
     if random.random() < chance_to_become_semi_sedentary(group):
-        group.facts.append("Group is converting to semi-sedentarism in turn: {}".format(information["turn"]))
         group.nomadism = "semi-sedentary"
+        fact = "{} is converting to semi-sedentarism.".format(group.name)
+        if information["turn"] in group.facts:
+            group.facts[information["turn"]].append(fact)
+        else:
+            group.facts[information["turn"]] = [fact]
 
 
 def discover_agriculture(group, world, information):
@@ -122,8 +126,12 @@ def discover_agriculture(group, world, information):
     :param information: A dictionary with the information for the events.
     """
     if random.random() < chance_to_discover_agriculture(group, world):
-        group.facts.append("Group has discovered agriculture in turn: {}".format(information["turn"]))
         group.activities.append("Agriculture")
+        fact = "{} has discovered agriculture.".format(group.name)
+        if information["turn"] in group.facts:
+            group.facts[information["turn"]].append(fact)
+        else:
+            group.facts[information["turn"]] = [fact]
 
 
 def become_sedentary(group, world, information):
@@ -137,8 +145,12 @@ def become_sedentary(group, world, information):
     :param information: A dictionary with the information for the events.
     """
     if random.random() < chance_to_become_sedentary(group):
-        group.facts.append("Group is converting to sedentarism in turn: {}".format(information["turn"]))
         group.nomadism = "sedentary"
+        fact = "{} is converting to sedentarism.".format(group.name)
+        if information["turn"] in group.facts:
+            group.facts[information["turn"]].append(fact)
+        else:
+            group.facts[information["turn"]] = [fact]
 
 
 def migrate(group, world, information):
@@ -155,8 +167,12 @@ def migrate(group, world, information):
         positions = land_cells_around(world, group.position, group.migration_radius, information["occupied_positions"])
         prosperity = ([Utils.perturbate_low(group.get_prosperity(world, p)), p] for p in positions)
         best = max(prosperity)
-        group.facts.append("Group is moving to better lands {} in turn: {}".format(best[1], information["turn"]))
         group.position = best[1]
+        fact = "{} is moving to better lands {}.".format(group.name, best[1])
+        if information["turn"] in group.facts:
+            group.facts[information["turn"]].append(fact)
+        else:
+            group.facts[information["turn"]] = [fact]
 
 
 def dead(group, world, information):
@@ -170,7 +186,11 @@ def dead(group, world, information):
     :param information: A dictionary with the information for the events.
     """
     if group.is_dead:
-        group.facts.append("Group has dead in turn: {}".format(information["turn"]))
+        fact = "{} has dead.".format(group.name)
+        if information["turn"] in group.facts:
+            group.facts[information["turn"]].append(fact)
+        else:
+            group.facts[information["turn"]] = [fact]
 
 
 def develop_trade(group, world, information):
@@ -184,6 +204,10 @@ def develop_trade(group, world, information):
     :return:
     """
     if random.random() < change_to_develop_trade(group, information["occupied_positions"]):
-        group.facts.append("Group has develop trade in turn {}".format(information["turn"]))
         group.knows_trade = True
+        fact = "{} has develop trade.".format(group.name)
+        if information["turn"] in group.facts:
+            group.facts[information["turn"]].append(fact)
+        else:
+            group.facts[information["turn"]] = [fact]
 
