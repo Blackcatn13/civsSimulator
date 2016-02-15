@@ -130,7 +130,7 @@
         ["Events.migrate", false],
         ["Events.dead", true],
         ["Events.develop_trade", true],
-        ["Events.trade", true]
+        ["Events.trade", false]
       ],
       "Migration-radius" : {
         "nomadic" : 2,
@@ -143,7 +143,10 @@
         "sedentary" : 0
       },
       "Trade-base-radius": 3,
-      "Wealth-base-multiplier": 1
+      "Wealth-base-multiplier": 1,
+      "Global-events" : [
+        ["GlobalEvents.famine", true]
+      ]
     },
     "Tribes": [
       {

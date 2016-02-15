@@ -305,3 +305,6 @@ class Group:
             return Utils.saturate(Utils.saturate(res, 1.0), men_factor * 3)
         else:
             return 0
+
+    def kill(self):
+        self._children = self._young_women = self._young_men = self._old_men = self._old_women = 0

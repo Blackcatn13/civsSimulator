@@ -2,7 +2,7 @@ import json
 import random
 from worldengine.world import World
 from civsSimulator.Group import Group
-from civsSimulator import Utils
+from civsSimulator import Utils, GlobalEvents
 
 
 class Game:
@@ -13,6 +13,7 @@ class Game:
         self.load_config(config)
         self._world = World.open_protobuf(world)
         self._turn = 0
+        self._global_events = self._config["Tribe"]["General"]["Global-events"]
 
     def load_config(self, config):
         with open(config) as data_file:
@@ -39,3 +40,5 @@ class Game:
                        "groups": self.groups}
         for group in self.groups:
             group.turn(self._world, information)
+        for e in self._global_events:
+            eval(e[0])(self._world, information, e[1])
