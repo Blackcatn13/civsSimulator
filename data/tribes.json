@@ -124,12 +124,13 @@
         "women-fertility" : 1.1
       },
       "Events" : [
-        "Events.become_semi_sedentary",
-        "Events.discover_agriculture",
-        "Events.become_sedentary",
-        "Events.migrate",
-        "Events.dead",
-        "Events.develop_trade"
+        ["Events.become_semi_sedentary", true],
+        ["Events.discover_agriculture", true],
+        ["Events.become_sedentary", true],
+        ["Events.migrate", false],
+        ["Events.dead", true],
+        ["Events.develop_trade", true],
+        ["Events.trade", true]
       ],
       "Migration-radius" : {
         "nomadic" : 2,

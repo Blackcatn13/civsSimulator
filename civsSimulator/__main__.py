@@ -7,8 +7,8 @@ def main():
     parser = argparse.ArgumentParser(prog="civsSimulator")
     parser.add_argument('world', help='.world file where the groups will be simulated.')
     parser.add_argument('config', help='.json with the configuration of the tribes.')
-    parser.add_argument('--groups', help='The number of groups that will be created to simulate.', default=20)
-    parser.add_argument('--turn', help='The number of turns the simulation will run.', default=50)
+    parser.add_argument('--groups', help='The number of groups that will be created to simulate.', default=20, type=int)
+    parser.add_argument('--turn', help='The number of turns the simulation will run.', default=50, type=int)
     opt = parser.parse_args()
     g = Game(opt.config, opt.world)
     for i in range(opt.groups + 1):

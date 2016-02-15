@@ -62,7 +62,15 @@ def land_cells_around(world, pos, radius, occupied_positions):
 def groups_around(pos, radius, occupied_positions):
     rad = range(-radius, radius + 1)
     positions = itertools.product(rad, rad)
-    return len([p for p in positions if Utils.add_list(pos, p) in occupied_positions])
+    return len([p for p in positions if Utils.add_list(pos, p) in occupied_positions and not p == (0, 0)])
+
+
+def groups_around_info(pos, radius, groups):
+    rad = range(-radius, radius + 1)
+    positions = itertools.product(rad, rad)
+    occupied = [g.position for g in groups]
+    g_positions = [Utils.add_list(pos, p) for p in positions if Utils.add_list(pos, p) in occupied and not p == (0, 0)]
+    return [g for g in groups if g.position in g_positions]
 
 
 class _exhausted:
@@ -77,7 +85,7 @@ def chance_to_migrate(group, world, occupied_positions):
         return (1 - group.prosperity) * group.migration_rate
 
 
-def change_to_develop_trade(group, occupied_positions):
+def chance_to_develop_trade(group, occupied_positions):
     if group.nomadism == "sedentary" and not group.knows_trade:
         neighbours = groups_around(group.position, group.trade_radius, occupied_positions)
         if neighbours > 0:
@@ -91,12 +99,20 @@ def change_to_develop_trade(group, occupied_positions):
     else:
         return 0
 
+
+def chance_to_trade(group, information):
+    if group.knows_trade:
+        neighbours = groups_around_info(group.position, group.trade_radius, information["groups"])
+        chance = Utils.saturate(len(neighbours) / (group.trade_radius * group.trade_radius - 1), 0.8)
+        return [chance, neighbours]
+    return [0, 0]
+
 # =======================
 # ====     Events    ====
 # =======================
 
 
-def become_semi_sedentary(group, world, information):
+def become_semi_sedentary(group, world, information, verbose):
     """
     This event checks if a group can evolve to semi sedentary.
 
@@ -105,17 +121,19 @@ def become_semi_sedentary(group, world, information):
     :param group: The group to check.
     :param world: The world.
     :param information: A dictionary with the information for the events.
+    :param verbose: True if the event has to register into facts, False otherwise
     """
     if random.random() < chance_to_become_semi_sedentary(group):
         group.nomadism = "semi-sedentary"
         fact = "{} is converting to semi-sedentarism.".format(group.name)
-        if information["turn"] in group.facts:
-            group.facts[information["turn"]].append(fact)
-        else:
-            group.facts[information["turn"]] = [fact]
+        if verbose:
+            if information["turn"] in group.facts:
+                group.facts[information["turn"]].append(fact)
+            else:
+                group.facts[information["turn"]] = [fact]
 
 
-def discover_agriculture(group, world, information):
+def discover_agriculture(group, world, information, verbose):
     """
     This event checks if a group discovers agriculture.
 
@@ -124,17 +142,19 @@ def discover_agriculture(group, world, information):
     :param group: The group to check.
     :param world: The world.
     :param information: A dictionary with the information for the events.
+    :param verbose: True if the event has to register into facts, False otherwise
     """
     if random.random() < chance_to_discover_agriculture(group, world):
         group.activities.append("Agriculture")
         fact = "{} has discovered agriculture.".format(group.name)
-        if information["turn"] in group.facts:
-            group.facts[information["turn"]].append(fact)
-        else:
-            group.facts[information["turn"]] = [fact]
+        if verbose:
+            if information["turn"] in group.facts:
+                group.facts[information["turn"]].append(fact)
+            else:
+                group.facts[information["turn"]] = [fact]
 
 
-def become_sedentary(group, world, information):
+def become_sedentary(group, world, information, verbose):
     """
     This event checks if a group can evolve to sedentary.
 
@@ -143,17 +163,19 @@ def become_sedentary(group, world, information):
     :param group: The group to check.
     :param world: The world.
     :param information: A dictionary with the information for the events.
+    :param verbose: True if the event has to register into facts, False otherwise
     """
     if random.random() < chance_to_become_sedentary(group):
         group.nomadism = "sedentary"
         fact = "{} is converting to sedentarism.".format(group.name)
-        if information["turn"] in group.facts:
-            group.facts[information["turn"]].append(fact)
-        else:
-            group.facts[information["turn"]] = [fact]
+        if verbose:
+            if information["turn"] in group.facts:
+                group.facts[information["turn"]].append(fact)
+            else:
+                group.facts[information["turn"]] = [fact]
 
 
-def migrate(group, world, information):
+def migrate(group, world, information, verbose):
     """
     This event checks if a group migrates from it's current position.
 
@@ -162,6 +184,7 @@ def migrate(group, world, information):
     :param group: The group to check.
     :param world: The world.
     :param information: A dictionary with the information for the events.
+    :param verbose: True if the event has to register into facts, False otherwise
     """
     if random.random() < chance_to_migrate(group, world, information["occupied_positions"]):
         positions = land_cells_around(world, group.position, group.migration_radius, information["occupied_positions"])
@@ -169,13 +192,14 @@ def migrate(group, world, information):
         best = max(prosperity)
         group.position = best[1]
         fact = "{} is moving to better lands {}.".format(group.name, best[1])
-        if information["turn"] in group.facts:
-            group.facts[information["turn"]].append(fact)
-        else:
-            group.facts[information["turn"]] = [fact]
+        if verbose:
+            if information["turn"] in group.facts:
+                group.facts[information["turn"]].append(fact)
+            else:
+                group.facts[information["turn"]] = [fact]
 
 
-def dead(group, world, information):
+def dead(group, world, information, verbose):
     """
     This event checks if a group is dead.
 
@@ -184,16 +208,18 @@ def dead(group, world, information):
     :param group: The group to check.
     :param world: The world.
     :param information: A dictionary with the information for the events.
+    :param verbose: True if the event has to register into facts, False otherwise
     """
     if group.is_dead:
         fact = "{} has dead.".format(group.name)
-        if information["turn"] in group.facts:
-            group.facts[information["turn"]].append(fact)
-        else:
-            group.facts[information["turn"]] = [fact]
+        if verbose:
+            if information["turn"] in group.facts:
+                group.facts[information["turn"]].append(fact)
+            else:
+                group.facts[information["turn"]] = [fact]
 
 
-def develop_trade(group, world, information):
+def develop_trade(group, world, information, verbose):
     """
     This event checks if a group can develop trade.
 
@@ -201,13 +227,37 @@ def develop_trade(group, world, information):
     :param group: The group to check.
     :param world: The world.
     :param information: A dictionary with the information for the events.
-    :return:
+    :param verbose: True if the event has to register into facts, False otherwise
     """
-    if random.random() < change_to_develop_trade(group, information["occupied_positions"]):
+    if random.random() < chance_to_develop_trade(group, information["occupied_positions"]):
         group.knows_trade = True
         fact = "{} has develop trade.".format(group.name)
-        if information["turn"] in group.facts:
-            group.facts[information["turn"]].append(fact)
-        else:
-            group.facts[information["turn"]] = [fact]
+        if verbose:
+            if information["turn"] in group.facts:
+                group.facts[information["turn"]].append(fact)
+            else:
+                group.facts[information["turn"]] = [fact]
 
+
+def trade(group, world, information, verbose):
+    """
+    This event makes a trade.
+
+    If we trade with a neighbour we update the wealth of the two groups.
+    :param group: The group to check.
+    :param world: The world
+    :param information: A dictionary with the information for the events.
+    :param verbose: True if the event has to register into facts, False otherwise
+    """
+    trade_chance = chance_to_trade(group, information)
+    if random.random() < trade_chance[0]:
+        fact = "{} is trading with: ".format(group.name)
+        for n in trade_chance[1]:
+            n.trade(group.prosperity)
+            group.trade(n.prosperity)
+            fact += n.name + " "
+        if verbose:
+            if information["turn"] in group.facts:
+                group.facts[information["turn"]].append(fact)
+            else:
+                group.facts[information["turn"]] = [fact]

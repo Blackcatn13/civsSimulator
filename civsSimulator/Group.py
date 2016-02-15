@@ -182,15 +182,15 @@ class Group:
         :param information: A dictionary with the information to give to the events.
         """
         for event in self._events:
-            eval(event)(self, world, information)
+            eval(event[0])(self, world, information, event[1])
 
     def _update_population(self, world):
         """
         This functions updates the population of the group.
         :param world: The world in which the group lives.
         """
-        p = self.get_prosperity(world, self.position)
-        self._last_prosperity = p * self.wealth_multiplier
+        p = self.get_prosperity(world, self.position) * self.wealth_multiplier
+        self._last_prosperity = p
         children_delta = self._update_children(p)
         young_delta = self._update_young(p)
         old_delta = self._update_old(p)
@@ -201,6 +201,7 @@ class Group:
         self._young_women += tot_delta[2]
         self._old_men += tot_delta[3]
         self._old_women += tot_delta[4]
+        # print("{} has a population of {}, with a wealth of {}".format(self.name, self.total_persons, self._wealth))
 
     def get_prosperity(self, world, position):
         """
@@ -241,7 +242,7 @@ class Group:
     def _get_crowding_per_activity(self, activity):
         actives = self.active_persons
         total = self.total_persons
-        max_support = self._max_populations[activity]
+        max_support = self._max_populations[activity] * self.wealth_multiplier
         pop_support = actives * self._crowding_per_activity[activity]
         pop_support = min(max_support, pop_support)
         if total < pop_support:
@@ -289,6 +290,12 @@ class Group:
         women_fertility = n_young_women * self._grown_rates["women-fertility"] * Utils.perturbate_high(prosp)
         births = round(women_fertility * men_availability_factor)
         return [births, 0, 0, 0, 0]
+
+    def trade(self, prosp):
+        if prosp > self.prosperity:
+            self._wealth += 5
+        else:
+            self._wealth += 1
 
     @staticmethod
     def _get_men_availability_factor(young_men, young_women):

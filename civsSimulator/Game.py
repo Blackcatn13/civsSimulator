@@ -35,6 +35,7 @@ class Game:
         self._turn += 1
         occupied_positions = [g.position for g in self.groups]
         tribes_type = [g.type for g in self.groups]
-        information = {"occupied_positions": occupied_positions, "turn": self._turn, "tribes-type": tribes_type}
+        information = {"occupied_positions": occupied_positions, "turn": self._turn, "tribes-type": tribes_type,
+                       "groups": self.groups}
         for group in self.groups:
             group.turn(self._world, information)
