@@ -16,7 +16,7 @@ def opposite(value):
 
 def rsplit(times, factor):
     ret = [0, 0]
-    for n in range(times):
+    for n in range(int(times)):
         if random.random() < factor:
             ret[0] += 1
         else:

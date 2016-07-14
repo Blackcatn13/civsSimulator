@@ -29,7 +29,7 @@ class Game:
         p = Utils.Position(random.randrange(0, self._world.width), random.randrange(0, self._world.height))
         while self._world.biome_at((p.x, p.y)).name() in unhosp_biomes:
             p = Utils.Position(random.randrange(0, self._world.width), random.randrange(0, self._world.height))
-        t = Group(p, tribe_info, self._config["Tribe"]["General"])
+        t = Group(p, tribe_info, self._config["Tribe"]["General"], len(self.groups))
         self.groups.append(t)
 
     def turn(self):

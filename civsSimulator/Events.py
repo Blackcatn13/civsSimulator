@@ -131,6 +131,10 @@ def become_semi_sedentary(group, world, information, verbose):
                 group.facts[information["turn"]].append(fact)
             else:
                 group.facts[information["turn"]] = [fact]
+        if information["turn"] in group.file_facts:
+            group.file_facts[information["turn"]]['nomadism'] = 'semi-sedentary'
+        else:
+            group.file_facts[information["turn"]] = {'nomadism': 'semi-sedentary'}
 
 
 def discover_agriculture(group, world, information, verbose):
@@ -152,6 +156,10 @@ def discover_agriculture(group, world, information, verbose):
                 group.facts[information["turn"]].append(fact)
             else:
                 group.facts[information["turn"]] = [fact]
+        if information["turn"] in group.file_facts:
+            group.file_facts[information["turn"]]['agricult'] = True
+        else:
+            group.file_facts[information["turn"]] = {'agricult': True}
 
 
 def become_sedentary(group, world, information, verbose):
@@ -173,6 +181,10 @@ def become_sedentary(group, world, information, verbose):
                 group.facts[information["turn"]].append(fact)
             else:
                 group.facts[information["turn"]] = [fact]
+        if information["turn"] in group.file_facts:
+            group.file_facts[information["turn"]]['nomadism'] = 'sedentary'
+        else:
+            group.file_facts[information["turn"]] = {'nomadism': 'sedentary'}
 
 
 def migrate(group, world, information, verbose):
@@ -198,6 +210,11 @@ def migrate(group, world, information, verbose):
             else:
                 group.facts[information["turn"]] = [fact]
 
+        if information["turn"] in group.file_facts:
+            group.file_facts[information["turn"]]['pos'] = best[1]
+        else:
+            group.file_facts[information["turn"]] = {'pos': best[1]}
+
 
 def dead(group, world, information, verbose):
     """
@@ -217,6 +234,10 @@ def dead(group, world, information, verbose):
                 group.facts[information["turn"]].append(fact)
             else:
                 group.facts[information["turn"]] = [fact]
+        if information["turn"] in group.file_facts:
+            group.file_facts[information["turn"]]['dead'] = True
+        else:
+            group.file_facts[information["turn"]] = {'dead': True}
 
 
 def develop_trade(group, world, information, verbose):

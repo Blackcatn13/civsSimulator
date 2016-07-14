@@ -38,7 +38,7 @@ class Group:
         * **Migration-rate**: this is a list with the probability of migrate depending the current tribe culture.
 
     """
-    def __init__(self, position, tribe, default):
+    def __init__(self, position, tribe, default, id):
         """
         This will create a group in the given position, and with the given parameters.
 
@@ -49,6 +49,7 @@ class Group:
         :param default: A dictionary containing all the default parameters for all the groups.
         """
         self._position = position
+        self.id = id
         mix_tribe = copy.deepcopy(tribe)
         def_tribe = copy.deepcopy(default)
         mix_tribe = Utils.update(mix_tribe, def_tribe)
@@ -72,10 +73,12 @@ class Group:
         self._migration_radius = mix_tribe["Migration-radius"]
         self._migration_rate = mix_tribe["Migration-rate"]
         self.facts = {}
+        self.file_facts = {}
         self._wealth = 0
         self._wealth_base_multiplier = mix_tribe["Wealth-base-multiplier"]
         self._trade_radius = mix_tribe["Trade-base-radius"]
         self.knows_trade = False
+        self.file_facts[0] = {'pos': self._position, 'nomadism': 'nomadic'}
 
     def print_population_info(self):
         """
